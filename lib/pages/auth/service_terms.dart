@@ -47,6 +47,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
     final t = context.l10n;
     final cs = Theme.of(context).colorScheme;
     return Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
         SizedBox(
           key: termsCheckboxKey,
@@ -63,29 +64,34 @@ class _ServiceTermsState extends State<ServiceTerms> {
             ),
           ),
         ),
-        AutoSizeText.rich(
-          TextSpan(children: [
-            TextSpan(text: "${t.authTerms}《"),
+        Expanded(
+          child: AutoSizeText.rich(
             TextSpan(
-              text: t.privacyPolicy,
-              style: TextStyle(
-                color: cs.primary,
-                decoration: TextDecoration.underline,
-              ),
-              recognizer: privacyPolicyRecognizer,
+              children: [
+                TextSpan(text: "${t.authTerms}《"),
+                TextSpan(
+                  text: t.privacyPolicy,
+                  style: TextStyle(
+                    color: cs.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: privacyPolicyRecognizer,
+                ),
+                TextSpan(text: "》${t.and}《"),
+                TextSpan(
+                  text: t.serviceTerms,
+                  style: TextStyle(
+                    color: cs.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: serviceTermsRecognizer,
+                ),
+                const TextSpan(text: "》"),
+              ],
             ),
-            TextSpan(text: "》${t.and}《"),
-            TextSpan(
-              text: t.serviceTerms,
-              style: TextStyle(
-                color: cs.primary,
-                decoration: TextDecoration.underline,
-              ),
-              recognizer: serviceTermsRecognizer,
-            ),
-            const TextSpan(text: "》"),
-          ]),
-          style: Theme.of(context).textTheme.caption,
+            style: Theme.of(context).textTheme.caption,
+            maxLines: 2,
+          ),
         ),
       ],
     );
