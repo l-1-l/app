@@ -4,6 +4,11 @@ import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'store/db.dart';
+import 'types/account.dart';
 
 class AppProviderObserver extends ProviderObserver {
   @override
@@ -35,7 +40,14 @@ class AppProviderObserver extends ProviderObserver {
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  final dir = await getApplicationSupportDirectory();
+  final isar = await Isar.open(
+    schemas: [
+      AccountSchema,
+    ],
+    directory: dir.path,
+  );
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -56,6 +68,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       runApp(
         ProviderScope(
           observers: [AppProviderObserver()],
+          overrides: [isarProvider.overrideWithValue(isar)],
           child: await builder(),
         ),
         //   ),
