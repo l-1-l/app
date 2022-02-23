@@ -30,7 +30,7 @@
       }
     }
   },
-  "smsUnreceived": "Didn't receive the code?",
+  "smsUnreceived": "Didn't receive the code? ",
   "smsResend": "Send again",
   "@_COMMON": {},
   "netError": "Network not available",
