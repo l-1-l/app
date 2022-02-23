@@ -5,12 +5,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../widgets/loading.dart';
 
-class AuthVerifyPage extends StatefulHookConsumerWidget {
+class AuthVerifyPage extends ConsumerStatefulWidget {
   final OtpReciver receiver;
   final bool isNewAccount;
 
@@ -116,6 +116,7 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
                   children: [
                     PinCodeTextField(
                       length: 6,
+                      autoFocus: true,
                       appContext: context,
                       showCursor: false,
                       useHapticFeedback: true,
@@ -165,7 +166,7 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
                   alignment: Alignment.topCenter,
                   child: Loader(
                     color: authNotifier.loading || isInvalidCode
-                        ? Colors.black
+                        ? cs.primary
                         : Colors.transparent,
                   ),
                 ),

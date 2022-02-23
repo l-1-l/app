@@ -18,8 +18,7 @@ dependencies:
   nil: ^1.1.1
   dio: ^4.0.4
   dio_cache_interceptor: ^3.2.5
-  flutter_hooks: ^0.18.2+1
-  hooks_riverpod: ^2.0.0-dev.3
+  flutter_riverpod: ^2.0.0-dev.3
   auto_route: ^3.2.4
   connectivity_plus: ^2.2.1
   isar: ^2.2.1

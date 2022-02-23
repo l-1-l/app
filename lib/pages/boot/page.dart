@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../pages/auth/signin.dart';
@@ -14,7 +13,7 @@ import '../../widgets/loading.dart';
 
 import 'store.dart';
 
-class BootPage extends HookConsumerWidget {
+class BootPage extends ConsumerWidget {
   const BootPage({Key? key}) : super(key: key);
 
   Null Function(
@@ -72,12 +71,11 @@ class BootPage extends HookConsumerWidget {
     final boot = ref.watch(bootProvider);
     final notifi = ref.read(notifProvider.notifier);
 
-    final showSnackbarCallback =
-        useCallback(showSnackbar(context, (reason) => notifi.idle()), []);
-
     ref.listen<NotifState>(notifProvider, (previous, next) {
       if (next != previous) {
-        next.maybeWhen(local: showSnackbarCallback, orElse: () {});
+        next.maybeWhen(
+            local: showSnackbar(context, (reason) => notifi.idle()),
+            orElse: () {});
       }
     });
 

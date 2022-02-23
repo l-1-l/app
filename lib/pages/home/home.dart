@@ -1,14 +1,11 @@
 import 'package:app/l10n/l10n.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../router/router.gr.dart';
-
-class HomePage extends HookConsumerWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final t = context.l10n;
 
     return DefaultTabController(

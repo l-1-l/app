@@ -1,5 +1,5 @@
 import 'package:app/store/notification/state.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'types.dart';
 
 class NotifNotifier extends StateNotifier<NotifState> {

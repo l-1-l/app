@@ -1,5 +1,5 @@
 import 'package:app/store/auth/auth.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'store.freezed.dart';
