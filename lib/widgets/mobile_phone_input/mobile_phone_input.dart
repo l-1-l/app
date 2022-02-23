@@ -98,7 +98,8 @@ class MobilePhoneInput extends StatelessWidget {
           height: 2,
           child: FractionallySizedBox(
             heightFactor: isFocus ? 1 : 0.5,
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
               decoration: BoxDecoration(
                 color: isFocus ? cs.primary : cs.outline,
                 borderRadius: BorderRadius.circular(isFocus ? 1 : 0.5),
