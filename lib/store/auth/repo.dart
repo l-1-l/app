@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:app/store/db.dart';
 import 'package:app/types/auth_token.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 
 import '../../types/account.dart';
 import '../token/repository.dart';
@@ -24,12 +26,13 @@ final authRepoProvider = Provider<AuthRepo>(
 class AuthRepo {
   late final AuthTokenRepository tokenRepo = AuthTokenRepository();
   late final NetClient net = _reader(netProvider);
+  late final Isar isar = _reader(isarProvider);
   final Reader _reader;
 
   AuthRepo(this._reader);
 
-  _receiverToJson(OtpReciver r) => r.when(
-        phoneNumber: (mobile) => {'phone_number': mobile},
+  Map<String, dynamic> _receiverToJson(OtpReciver r) => r.when(
+        phoneNumber: (mobile) => {'phone_number': mobile.toJson()},
         email: (email) => {'email': email},
       );
 
@@ -40,7 +43,7 @@ class AuthRepo {
 
     final res = await net.post<Map<String, dynamic>>(
       API.authCode,
-      jsonEncode(payload),
+      json.encode(payload),
     );
 
     return res.when(
@@ -61,17 +64,22 @@ class AuthRepo {
     required String code,
   }) async {
     var payload = _receiverToJson(receiver);
+
     payload['code'] = code;
 
     final res = await net.post<Map<String, dynamic>>(
       API.signup,
-      jsonEncode(payload),
+      json.encode(payload),
     );
     res.when(
-        success: (data) {
+        success: (data) async {
           final account = Account.fromJson(data['account']);
           final token =
               AuthToken(accessToken: data['token'] as String, refreshToken: '');
+
+          await isar.writeTxn((isar) async {
+            final id = isar.accounts.put(account);
+          });
 
           tokenRepo.save(token);
         },

@@ -32,4 +32,11 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     state = await _authRepo.sendCode(reciver);
     return state;
   }
+
+  Future<void> signup(
+    OtpReciver receiver,
+    String code,
+  ) async {
+    await _authRepo.signup(receiver: receiver, code: code);
+  }
 }

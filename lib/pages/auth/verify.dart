@@ -6,9 +6,7 @@ import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-
-import '../../widgets/loading.dart';
+import 'package:pinput/pin_put/pin_put.dart';
 
 class AuthVerifyPage extends ConsumerStatefulWidget {
   final OtpReciver receiver;
@@ -25,21 +23,26 @@ class AuthVerifyPage extends ConsumerStatefulWidget {
 }
 
 class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
-  late final AuthStateNotifier authNotifier;
   late final TapGestureRecognizer resendRecognizer;
-  late bool isInvalidCode;
+  late final TextEditingController inputController;
+  late final FocusNode inputNode;
+  // late final
 
   @override
   void initState() {
     super.initState();
-    isInvalidCode = false;
-    authNotifier = ref.read(authProvider.notifier);
+    inputNode = FocusNode();
+    inputController = TextEditingController();
+
     resendRecognizer = TapGestureRecognizer()
       ..onTap = () {
         EasyDebounce.debounce(
           "resendDebouncer",
           const Duration(seconds: 3),
-          () => authNotifier.sendCode(widget.receiver),
+          () {
+            final authNotifier = ref.read(authProvider.notifier);
+            authNotifier.sendCode(widget.receiver);
+          },
         );
       };
   }
@@ -47,24 +50,41 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
   @override
   void dispose() {
     super.dispose();
+    inputController.dispose();
     resendRecognizer.dispose();
     EasyDebounce.cancel("resendDebouncer");
   }
 
-  handleSubmit(String v) {
-    if (int.tryParse(v) == null) {
-      setState(() {
-        isInvalidCode = true;
-      });
-      Future.delayed(const Duration(milliseconds: 600), () {
-        setState(() {
-          isInvalidCode = false;
-        });
-      });
+  handleSubmit(String v) async {
+    final auth = ref.read(authProvider.notifier);
+
+    print("start");
+    await auth.signup(widget.receiver, inputController.text);
+    print("end");
+  }
+
+  handleChange(String v) {
+    if (v.isNotEmpty && int.tryParse(v) == null || v.contains(' ')) {
+      var validCode = v.substring(0, v.length - 1);
+
+      inputController.value = TextEditingValue(
+        text: validCode,
+        selection: TextSelection.collapsed(offset: validCode.length),
+      );
+    }
+
+    if (inputController.text.length >= 6) {
+      inputNode.unfocus();
+      handleSubmit(inputController.text);
     }
   }
 
-  handleChange(String v) {}
+  BoxDecoration get _pinPutDecoration {
+    return BoxDecoration(
+      border: Border.all(color: Theme.of(context).colorScheme.outline),
+      borderRadius: BorderRadius.circular(6),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,64 +130,55 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
               ),
               Expanded(
                 flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PinCodeTextField(
-                      length: 6,
-                      autoFocus: true,
-                      appContext: context,
-                      showCursor: false,
-                      useHapticFeedback: true,
-                      textStyle: const TextStyle(fontSize: 24),
-                      animationCurve: Curves.easeInOut,
-                      animationType: AnimationType.scale,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      pinTheme: PinTheme(
-                        shape: PinCodeFieldShape.box,
-                        borderWidth: 1,
-                        borderRadius: BorderRadius.circular(4),
-                        fieldHeight: 38,
-                        fieldWidth: 30,
-                        selectedFillColor: cs.outline,
-                        selectedColor: cs.primary.withOpacity(.6),
-                        inactiveFillColor: cs.outline,
-                        inactiveColor: cs.outline,
-                        activeFillColor: cs.outline,
-                        activeColor: cs.outline,
-                      ),
-                      keyboardType: TextInputType.number,
-                      onCompleted: handleSubmit,
-                      onChanged: handleChange,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: PinPut(
+                    fieldsCount: 6,
+                    autofocus: true,
+                    focusNode: inputNode,
+                    controller: inputController,
+                    keyboardType: TextInputType.number,
+                    onChanged: handleChange,
+                    pinAnimationType: PinAnimationType.scale,
+                    fieldsAlignment: MainAxisAlignment.spaceEvenly,
+                    textStyle: const TextStyle(fontSize: 24),
+                    eachFieldConstraints: const BoxConstraints(
+                      maxHeight: 38,
+                      maxWidth: 30,
                     ),
-                    AutoSizeText.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: t.smsUnreceived),
-                          TextSpan(
-                            text: t.smsResend,
-                            recognizer: resendRecognizer,
-                            style: textTheme.caption?.copyWith(
-                              color: cs.primary,
-                              decoration: TextDecoration.underline,
-                            ),
-                          )
-                        ],
-                      ),
-                      style: textTheme.caption,
+                    submittedFieldDecoration: _pinPutDecoration.copyWith(
+                        // borderRadius: BorderRadius.circular(20.0),
+                        ),
+                    selectedFieldDecoration: _pinPutDecoration.copyWith(
+                      border: Border.all(color: cs.primary),
                     ),
-                  ],
+                    followingFieldDecoration: _pinPutDecoration.copyWith(
+                      border: Border.all(
+                        color: cs.outline,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               Expanded(
                 flex: 5,
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Loader(
-                    color: authNotifier.loading || isInvalidCode
-                        ? cs.primary
-                        : Colors.transparent,
+                  child: AutoSizeText.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: t.smsUnreceived),
+                        TextSpan(
+                          text: t.smsResend,
+                          recognizer: resendRecognizer,
+                          style: textTheme.caption?.copyWith(
+                            color: cs.primary,
+                            decoration: TextDecoration.underline,
+                          ),
+                        )
+                      ],
+                    ),
+                    style: textTheme.caption,
                   ),
                 ),
               ),

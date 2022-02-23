@@ -94,20 +94,6 @@ class _SigninState extends ConsumerState<SigninPage> {
       phoneNumber,
     ).validate(type: mp_parser.PhoneNumberType.mobile);
 
-    context.pushRoute(
-      AuthRouter(
-        children: [
-          AuthVerifyRouter(
-            receiver: OtpReciver.phoneNumber(
-                PhoneNumber(prefix: '86', mobile: "17600480233")),
-            isNewAccount: true,
-          ),
-        ],
-      ),
-    );
-
-    return;
-
     if (isAcceptedTerms == null || !isAcceptedTerms!) {
       // _notifNotifier.local('劳驾需要您同意服务条款', icon: false);
       setState(() {

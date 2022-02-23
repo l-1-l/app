@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:isar/isar.dart';
 
-import '../types/phone_number.dart';
+import 'phone_number.dart';
 import 'account_status.dart';
 
 part 'account.freezed.dart';
@@ -9,13 +10,15 @@ part 'account.g.dart';
 @Freezed(
   unionValueCase: FreezedUnionCase.snake,
 )
+@Collection()
 class Account with _$Account {
-  const factory Account({
-    required int id,
+  factory Account({
+    @Id() int? id_,
+    required String id,
     String? userId,
-    required PhoneNumber phoneNumber,
+    @PhoneNumberConverter() required final PhoneNumber phoneNumber,
     String? email,
-    required AccountStatus status,
+    @AccountStatusConverter() required final AccountStatus status,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _Account;
