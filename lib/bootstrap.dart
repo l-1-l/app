@@ -63,16 +63,12 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   await runZonedGuarded(
     () async {
-      // await BlocOverrides.runZoned(
-      //   () async =>
       runApp(
         ProviderScope(
           observers: [AppProviderObserver()],
           overrides: [isarProvider.overrideWithValue(isar)],
           child: await builder(),
         ),
-        //   ),
-        //   blocObserver: AppBlocObserver(),
       );
     },
     (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
