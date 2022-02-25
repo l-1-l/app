@@ -1,15 +1,15 @@
 import 'package:app/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
-class AccountView extends StatefulWidget {
-  const AccountView({Key? key}) : super(key: key);
+class AccountPage extends StatefulWidget {
+  const AccountPage({Key? key}) : super(key: key);
 
   @override
-  State<AccountView> createState() => _AccountViewState();
+  State<AccountPage> createState() => _AccountPageState();
 }
 
-class _AccountViewState extends State<AccountView>
-    with AutomaticKeepAliveClientMixin<AccountView> {
+class _AccountPageState extends State<AccountPage>
+    with AutomaticKeepAliveClientMixin<AccountPage> {
   @override
   bool get wantKeepAlive => true;
 

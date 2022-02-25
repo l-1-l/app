@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 
+import '../pages/account/account.dart';
 import '../pages/auth/verify.dart';
 import '../pages/auth/signin.dart';
 import '../pages/home/home.dart';
 import '../pages/messaging/messaging.dart';
 import '../pages/landing.dart';
+import '../pages/explore/expore.dart';
+import '../pages/publish/publish.dart';
 
 @CustomAutoRouter(
   transitionsBuilder: TransitionsBuilders.slideLeft,
@@ -15,32 +18,32 @@ import '../pages/landing.dart';
       page: LandingPage,
       children: [
         AutoRoute(
-          initial: true,
           path: '',
           name: 'HomeRouter',
-          usesPathAsKey: true,
           page: HomePage,
         ),
         AutoRoute(
-          initial: true,
           path: 'explore',
-          name: 'ExploreRouter',
           usesPathAsKey: true,
-          page: HomePage,
+          page: ExplorePage,
         ),
         AutoRoute(
           path: 'messaging',
-          name: 'MessagingRouter',
           usesPathAsKey: true,
           page: MessagingPage,
         ),
         AutoRoute(
           path: 'account',
-          name: 'AccountRouter',
           usesPathAsKey: true,
-          page: MessagingPage,
+          page: AccountPage,
         ),
       ],
+    ),
+    CustomRoute(
+      path: '/publish',
+      usesPathAsKey: true,
+      page: PublishPage,
+      transitionsBuilder: TransitionsBuilders.slideRight,
     ),
     AutoRoute(
       path: '/auth',
