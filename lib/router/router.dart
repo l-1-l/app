@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-// import 'package:flutter/cupertino.dart';
 
 import '../pages/auth/verify.dart';
-import '../pages/boot/page.dart';
 import '../pages/auth/signin.dart';
 import '../pages/home/home.dart';
 import '../pages/messaging/messaging.dart';
@@ -13,9 +11,36 @@ import '../pages/landing.dart';
   replaceInRouteName: 'Page,Router',
   routes: <AutoRoute>[
     AutoRoute(
-      initial: true,
-      path: '/boot',
-      page: BootPage,
+      path: '/',
+      page: LandingPage,
+      children: [
+        AutoRoute(
+          initial: true,
+          path: '',
+          name: 'HomeRouter',
+          usesPathAsKey: true,
+          page: HomePage,
+        ),
+        AutoRoute(
+          initial: true,
+          path: 'explore',
+          name: 'ExploreRouter',
+          usesPathAsKey: true,
+          page: HomePage,
+        ),
+        AutoRoute(
+          path: 'messaging',
+          name: 'MessagingRouter',
+          usesPathAsKey: true,
+          page: MessagingPage,
+        ),
+        AutoRoute(
+          path: 'account',
+          name: 'AccountRouter',
+          usesPathAsKey: true,
+          page: MessagingPage,
+        ),
+      ],
     ),
     AutoRoute(
       path: '/auth',
@@ -25,29 +50,10 @@ import '../pages/landing.dart';
         AutoRoute(
           path: 'signin',
           page: SigninPage,
-          // customRouteBuilder: TransitionsBuilders.fadeIn,
         ),
         AutoRoute(
           path: 'verify',
           page: AuthVerifyPage,
-        ),
-      ],
-    ),
-    AutoRoute(
-      path: '/app',
-      initial: true,
-      page: LandingPage,
-      name: 'LandingRouter',
-      children: <AutoRoute>[
-        AutoRoute(
-          path: 'home',
-          name: 'HomeRouter',
-          page: HomePage,
-        ),
-        AutoRoute(
-          path: 'messaging',
-          name: 'MessagingRouter',
-          page: MessagingPage,
         ),
       ],
     ),

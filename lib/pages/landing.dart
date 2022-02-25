@@ -1,7 +1,7 @@
-import 'package:app/router/mod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../router/router.gr.dart';
 import '../widgets/iconfont.dart';
 import '../l10n/l10n.dart';
 
@@ -20,9 +20,7 @@ class LandingPage extends StatelessWidget {
         HomeRouter(),
         MessagingRouter(),
       ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        print(context.topRouteMatch.name);
-
+      bottomNavigationBuilder: (context, tabsRouter) {
         return Theme(
           data: Theme.of(context).copyWith(splashColor: Colors.transparent),
           child: BottomNavigationBar(
@@ -34,9 +32,9 @@ class LandingPage extends StatelessWidget {
             onTap: tabsRouter.setActiveIndex,
             items: [
               BottomNavigationBarItem(
+                label: t.home,
                 icon: const Icon(Iconfont.home_line),
                 activeIcon: const Icon(Iconfont.home_fill),
-                label: t.home,
               ),
               BottomNavigationBarItem(
                 label: t.explore,

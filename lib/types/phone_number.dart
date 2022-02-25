@@ -21,8 +21,7 @@ class PhoneNumberConverter extends TypeConverter<PhoneNumber, String> {
   const PhoneNumberConverter();
 
   @override
-  fromIsar(String object) =>
-      PhoneNumber.fromJson(object as Map<String, dynamic>);
+  fromIsar(String object) => PhoneNumber.fromJson(json.decode(object));
 
   @override
   toIsar(object) => json.encode(object.toJson());

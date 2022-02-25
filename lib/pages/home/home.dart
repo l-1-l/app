@@ -2,10 +2,21 @@ import 'package:app/l10n/l10n.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin<HomePage> {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final t = context.l10n;
 
     return DefaultTabController(
@@ -38,7 +49,7 @@ class HomePage extends StatelessWidget {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    context.router.pushNamed('/auth');
+                    context.router.pushNamed('/auth/signin');
                   },
                   child: Text('Auth'),
                 ),

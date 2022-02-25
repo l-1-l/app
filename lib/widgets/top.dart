@@ -1,20 +1,22 @@
+import 'package:app/l10n/l10n.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nil/nil.dart';
 
-import '../../l10n/l10n.dart';
-import '../../pages/auth/signin.dart';
-import '../../pages/landing.dart';
-import '../../store/network/provider.dart';
-import '../../store/network/state.dart';
-import '../../store/notification/notification.dart';
-import '../../widgets/iconfont.dart';
-import '../../widgets/loading.dart';
+import '../store/network/network.dart';
+import '../store/notification/notification.dart';
+import 'iconfont.dart';
 
-import 'store.dart';
+class Top extends ConsumerWidget {
+  const Top(
+    this.child,
+    this.navigatorKey, {
+    Key? key,
+  }) : super(key: key);
 
-class BootPage extends ConsumerWidget {
-  const BootPage({Key? key}) : super(key: key);
+  final Widget? child;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   Null Function(
     String msg,
@@ -66,34 +68,29 @@ class BootPage extends ConsumerWidget {
       };
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = context.l10n;
-    final boot = ref.watch(bootProvider);
-    final notifi = ref.read(notifProvider.notifier);
+  Widget build(BuildContext context, ref) {
+    final notifi = ref.watch(notifProvider.notifier);
 
+    final ctx = navigatorKey.currentContext;
     ref.listen<NotifState>(notifProvider, (previous, next) {
-      if (next != previous) {
+      if (next != previous && ctx != null) {
         next.maybeWhen(
-            local: showSnackbar(context, (reason) => notifi.idle()),
-            orElse: () {});
+          local: showSnackbar(ctx, (reason) => notifi.idle()),
+          orElse: () {},
+        );
       }
     });
 
     ref.listen<NetworkState>(networkProvider, (previous, next) {
-      next.maybeWhen(
-        off: () {
-          notifi.local(t.netError, type: LocalNotifiType.error);
-        },
-        orElse: () {},
-      );
+      if (previous != next && ctx != null) {
+        next.maybeWhen(
+          off: () {
+            notifi.local(ctx.l10n.netError, type: LocalNotifiType.error);
+          },
+          orElse: () {},
+        );
+      }
     });
-
-    return boot.maybeWhen(
-      authenticated: () => const LandingPage(),
-      unauthenticated: () => const SigninPage(),
-      orElse: () => const Loader(
-        color: Colors.black,
-      ),
-    );
+    return child ?? nil;
   }
 }

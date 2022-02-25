@@ -7,10 +7,6 @@ import '../../types/account.dart';
 
 part 'state.freezed.dart';
 
-// 验证手机
-// 登录
-//
-
 @freezed
 class AuthState with _$AuthState {
   const factory AuthState.initial() = _Initial;

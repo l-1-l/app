@@ -1,5 +1,3 @@
-import 'package:app/router/mod.dart';
-import 'package:app/store/keyboard/keyboard.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bubble_box/bubble_box.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -7,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart' as mp_parser;
 
+import '../../router/router.gr.dart';
+import '../../store/keyboard/keyboard.dart';
 import '../../types/otp_receiver.dart';
 import 'service_terms.dart';
 import '../../l10n/l10n.dart';
-import '../../store/auth/auth.dart';
+import '../../store/auth.dart';
 import '../../widgets/loading.dart';
 import '../../widgets/mobile_phone_input/mobile_phone_input.dart';
 import '../../types/phone_number.dart';
@@ -125,13 +125,9 @@ class _SigninState extends ConsumerState<SigninPage> {
         value.maybeWhen(
           sendSmsOk: (isNewAccount, receiver) {
             context.pushRoute(
-              AuthRouter(
-                children: [
-                  AuthVerifyRouter(
-                    receiver: receiver,
-                    isNewAccount: isNewAccount,
-                  ),
-                ],
+              AuthVerifyRouter(
+                receiver: receiver,
+                isNewAccount: isNewAccount,
               ),
             );
           },

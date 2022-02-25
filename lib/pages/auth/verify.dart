@@ -1,12 +1,15 @@
-import 'package:app/l10n/l10n.dart';
-import 'package:app/store/auth/auth.dart';
-import 'package:app/types/otp_receiver.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+
+import '../../router/router.gr.dart';
+import '../../l10n/l10n.dart';
+import '../../store/auth.dart';
+import '../../types/otp_receiver.dart';
 
 class AuthVerifyPage extends ConsumerStatefulWidget {
   final OtpReciver receiver;
@@ -58,9 +61,8 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
   handleSubmit(String v) async {
     final auth = ref.read(authProvider.notifier);
 
-    print("start");
     await auth.signup(widget.receiver, inputController.text);
-    print("end");
+    context.replaceRoute(const LandingRouter());
   }
 
   handleChange(String v) {

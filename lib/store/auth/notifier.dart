@@ -1,19 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../types/otp_receiver.dart';
+import '../../types/account.dart';
 
 import 'state.dart';
 import 'repo.dart';
 
+final accountProvider = Provider<Account?>((_) => null);
+
 final authProvider = StateNotifierProvider<AuthStateNotifier, AuthState>(
-  (ref) => AuthStateNotifier(ref.read),
+  (ref) {
+    final account = ref.watch(accountProvider);
+    return AuthStateNotifier(
+      ref.read,
+      account == null ? const AuthState.initial() : AuthState.signed(account),
+    );
+  },
 );
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
   final Reader _reader;
   late final AuthRepo _authRepo = _reader(authRepoProvider);
 
-  AuthStateNotifier(this._reader) : super(const AuthState.initial());
+  AuthStateNotifier(this._reader, AuthState initialState) : super(initialState);
 
   bool get loading => state == const AuthState.loading();
 

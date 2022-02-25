@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'store/auth.dart';
 import 'store/db.dart';
 import 'types/account.dart';
 
@@ -49,6 +50,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     directory: dir.path,
   );
 
+  final accounts = await isar.accounts.where().findAll();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -66,7 +69,11 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       runApp(
         ProviderScope(
           observers: [AppProviderObserver()],
-          overrides: [isarProvider.overrideWithValue(isar)],
+          overrides: [
+            isarProvider.overrideWithValue(isar),
+            if (accounts.isNotEmpty)
+              accountProvider.overrideWithValue(accounts.first),
+          ],
           child: await builder(),
         ),
       );

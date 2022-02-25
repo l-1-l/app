@@ -1,2 +1,2 @@
-export 'auth/auth.dart';
+export 'auth.dart';
 export 'token/token.dart';
