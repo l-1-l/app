@@ -30,7 +30,10 @@ class PreferencesNotifier extends StateNotifier<Preferences> {
   }
 
   void setKeyboardHeight(double height) {
-    if (height == 0 || height == state.keyboardHeight) return;
+    if (height == 0 ||
+        height == state.keyboardHeight ||
+        height <= state.keyboardHeight) return;
+
     state = state.copyWith(keyboardHeight: height);
     unawaited(repo.save(state));
   }

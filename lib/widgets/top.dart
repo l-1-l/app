@@ -6,9 +6,11 @@ import 'package:nil/nil.dart';
 
 import '../store/network.dart';
 import '../store/notification.dart';
+import '../store/preferences.dart';
 import 'iconfont.dart';
+import 'keyboard_height_observer.dart';
 
-class Top extends ConsumerWidget {
+class Top extends ConsumerStatefulWidget {
   const Top(
     this.child,
     this.navigatorKey, {
@@ -17,6 +19,17 @@ class Top extends ConsumerWidget {
 
   final Widget? child;
   final GlobalKey<NavigatorState> navigatorKey;
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _TopState();
+}
+
+class _TopState extends ConsumerState<Top>
+    with WidgetsBindingObserver, KeyboardHeightObserver {
+  @override
+  void onKeyboardOpen(double height) {
+    ref.read(preferencesProvider.notifier).setKeyboardHeight(height);
+  }
 
   Null Function(
     String msg,
@@ -68,14 +81,9 @@ class Top extends ConsumerWidget {
       };
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final notifi = ref.watch(notifProvider.notifier);
-    final ctx = navigatorKey.currentContext;
-    // final bottomViewInsets = MediaQuery.of(context).viewInsets.bottom;
-
-    // if (bottomViewInsets > 0) {
-    //   ref.read(keyboardHeightProvider.notifier).set(bottomViewInsets);
-    // }
+    final ctx = widget.navigatorKey.currentContext;
 
     ref.listen<NotifState>(notifProvider, (previous, next) {
       if (next != previous && ctx != null) {
@@ -98,6 +106,6 @@ class Top extends ConsumerWidget {
       }
     });
 
-    return child ?? nil;
+    return widget.child ?? nil;
   }
 }
