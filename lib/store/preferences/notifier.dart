@@ -11,6 +11,9 @@ final preferencesProvider =
   (ref) => throw UnimplementedError(),
 );
 
+final keybaordHeightProvider =
+    Provider((ref) => ref.watch(preferencesProvider).keyboardHeight);
+
 class PreferencesNotifier extends StateNotifier<Preferences> {
   PreferencesNotifier(
     this._reader,
