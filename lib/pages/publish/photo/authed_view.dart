@@ -1,3 +1,4 @@
+import 'package:app/store/preferences/notifier.dart';
 import 'package:app/widgets/iconfont.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
@@ -24,12 +25,20 @@ class _MPAuthedViewState extends ConsumerState<MPAuthedView> {
   final GlobalKey _cropKey = GlobalKey();
   final FocusNode _textEditorNode = FocusNode();
 
-  bool isMultiple = false;
+  bool _isMultiple = false;
   _WorkMode _mode = _WorkMode.initial;
+  late double _keyboardHeight;
 
-  String? current;
-  IList<String> selected = IList();
+  String? _currentMedia;
+  IList<String> _selectedMedias = IList();
+
   late String? _text;
+
+  @override
+  void initState() {
+    _keyboardHeight = ref.read(keybaordHeightProvider);
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -55,61 +64,56 @@ class _MPAuthedViewState extends ConsumerState<MPAuthedView> {
 
   void _setIsMultiple() {
     setState(() {
-      if (isMultiple) {
-        selected = IList();
-      } else if (current != null) {
-        selected = selected.add(current!);
+      if (_isMultiple) {
+        _selectedMedias = IList();
+      } else if (_currentMedia != null) {
+        _selectedMedias = _selectedMedias.add(_currentMedia!);
       }
 
-      isMultiple = !isMultiple;
+      _isMultiple = !_isMultiple;
     });
   }
 
   void _setWorkMode(_WorkMode mode) {
-    // if (mode == _WorkMode.text) {
-    //   _textEditorNode.requestFocus();
-    // } else if (_textEditorNode.hasFocus) {
-    //   _textEditorNode.unfocus();
-    // }
-
     setState(() {
       _mode = mode;
     });
   }
 
   void _handleThumbnailTap(AlbumThumb media, bool isBdgeTap) {
-    // final isFocusing = currentMedia != null && currentMedia!.id == media.id;
-    final isFocusing = current != null && current == media.id;
+    final isFocusing = _currentMedia != null && _currentMedia == media.id;
 
-    if (!isMultiple) {
+    if (!_isMultiple) {
       if (isFocusing) return;
 
       return setState(() {
-        current = media.id;
+        _mode = _WorkMode.photo;
+        _currentMedia = media.id;
       });
     }
-    final tempSelected = selected.unlockLazy;
+    final tempSelected = _selectedMedias.unlockLazy;
 
     final idx = tempSelected.indexWhere((element) => element == media.id);
 
     setState(() {
+      _mode = _WorkMode.photo;
       if (idx > -1) {
         if (isFocusing || isBdgeTap) {
           tempSelected.removeAt(idx);
-          current = tempSelected.length > 1 ? tempSelected.last : null;
-          selected = tempSelected.lock;
+          _currentMedia = tempSelected.length > 1 ? tempSelected.last : null;
+          _selectedMedias = tempSelected.lock;
           return;
         }
 
-        current = media.id;
+        _currentMedia = media.id;
         return;
       }
 
       if (tempSelected.length >= 10) return;
 
       tempSelected.add(media.id);
-      selected = tempSelected.lock;
-      current = media.id;
+      _selectedMedias = tempSelected.lock;
+      _currentMedia = media.id;
     });
   }
 
@@ -128,133 +132,121 @@ class _MPAuthedViewState extends ConsumerState<MPAuthedView> {
         ),
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
-          // backgroundColor: Colors.transparent,
-          toolbarHeight: 40,
-          title: const AutoSizeText('新帖子'),
-          leading: const Icon(Iconfont.close_outline),
-          actions: [
-            InkWell(
-              child: Container(
-                padding: const EdgeInsets.only(right: 16),
-                alignment: Alignment.centerLeft,
-                child: const AutoSizeText(
-                  '发布',
-                ),
-              ),
-            ),
-          ],
+          toolbarHeight: 38,
+          title: const AutoSizeText(
+            '新帖子',
+          ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Builder(
-              builder: (context) {
-                if (_mode == _WorkMode.initial || _mode == _WorkMode.photo) {
-                  if (current == null) {
-                    return Expanded(
-                      // aspectRatio: 1,
-                      child: _TextEditor(
-                        key: const ValueKey('IdleTextEditor'),
-                        keyboardType: TextInputType.none,
-                        onTap: _handleTextEditorTap,
-                        onChange: _handleTextEditorChange,
+        body: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          if (_mode == _WorkMode.initial ||
+                              _mode == _WorkMode.photo) {
+                            if (_currentMedia == null) {
+                              return _TextEditor(
+                                key: const ValueKey('IdleTextEditor'),
+                                keyboardType: TextInputType.none,
+                                onTap: _handleTextEditorTap,
+                                onChange: _handleTextEditorChange,
+                              );
+                            }
+
+                            return _PhotoEditor(
+                              key: const ValueKey('PhotoEditor'),
+                              cropKey: _cropKey,
+                              media: state.medias.get(_currentMedia!),
+                            );
+                          }
+
+                          return _TextEditor(
+                            key: const ValueKey('TextEditor'),
+                            focusNode: _textEditorNode,
+                            onChange: _handleTextEditorChange,
+                          );
+                        },
+                        // ),
                       ),
-                    );
-                  }
-
-                  return Expanded(
-                    // aspectRatio: 1,
-                    child: _PhotoEditor(
-                      key: const ValueKey('PhotoEditor'),
-                      cropKey: _cropKey,
-                      media: state.medias.get(current!),
                     ),
-                  );
-                }
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.grey.withOpacity(.3),
+                            width: 0.1,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          _Icon(
+                            Iconfont.photo,
+                            data: _WorkMode.photo,
+                            onDataTap: _setWorkMode,
+                          ),
+                          _Icon<dynamic>(
+                            Iconfont.box_multiple,
+                            onTap: _setIsMultiple,
+                          ),
+                          const Expanded(child: SizedBox()),
+                          _Icon(
+                            Iconfont.note_pencil,
+                            data: _WorkMode.text,
+                            onDataTap: _setWorkMode,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: _keyboardHeight,
+                      child: GridView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: state.thumbs.length,
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 1,
+                          crossAxisSpacing: 1,
+                        ),
+                        itemBuilder: (context, idx) {
+                          if (state.thumbs.isEmpty) return nil;
+                          final media = state.thumbs[idx];
+                          final serial = _selectedMedias
+                              .indexWhere((element) => element == media.id);
 
-                return Expanded(
-                  // aspectRatio: 1,
-                  child: _TextEditor(
-                    key: const ValueKey('TextEditor'),
-                    focusNode: _textEditorNode,
-                    onChange: _handleTextEditorChange,
-                  ),
-                );
-              },
-              // ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.grey.withOpacity(.3),
-                    width: 0.1,
-                  ),
+                          final disabled = _isMultiple &&
+                              _selectedMedias.length >= 10 &&
+                              !_selectedMedias
+                                  .any((element) => element == media.id);
+
+                          return Thumbnail(
+                            key: ValueKey(media.id),
+                            badgeVisible: _isMultiple,
+                            media: media,
+                            focus: media.id == _currentMedia,
+                            serial: serial > -1 ? serial + 1 : null,
+                            disable: disabled,
+                            onTap: _handleThumbnailTap,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _Icon(
-                    Iconfont.photo,
-                    data: _WorkMode.photo,
-                    onDataTap: _setWorkMode,
-                  ),
-                  _Icon(
-                    Iconfont.note_pencil,
-                    data: _WorkMode.text,
-                    onDataTap: _setWorkMode,
-                  ),
-                  AnimatedOpacity(
-                    opacity:
-                        _mode == _WorkMode.initial || _mode == _WorkMode.photo
-                            ? 1
-                            : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: _Icon<dynamic>(
-                      Iconfont.box_multiple,
-                      onTap: _setIsMultiple,
-                    ),
-                  ),
-                ],
-              ),
             ),
-            if (_mode == _WorkMode.initial || _mode == _WorkMode.photo)
-              Expanded(
-                child: GridView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: state.thumbs.length,
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 1,
-                    crossAxisSpacing: 1,
-                  ),
-                  itemBuilder: (context, idx) {
-                    if (state.thumbs.isEmpty) return nil;
-                    final media = state.thumbs[idx];
-                    final serial =
-                        selected.indexWhere((element) => element == media.id);
-
-                    final disabled = isMultiple &&
-                        selected.length >= 10 &&
-                        !selected.any((element) => element == media.id);
-
-                    return Thumbnail(
-                      key: ValueKey(media.id),
-                      badgeVisible: isMultiple,
-                      media: media,
-                      focus: media.id == current,
-                      serial: serial > -1 ? serial + 1 : null,
-                      disable: disabled,
-                      onTap: _handleThumbnailTap,
-                    );
-                  },
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );

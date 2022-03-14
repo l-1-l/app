@@ -37,6 +37,7 @@ class _PublishPageState extends ConsumerState<PublishPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
