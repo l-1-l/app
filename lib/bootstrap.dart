@@ -48,10 +48,9 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   await dir.create(recursive: true);
   final dbPath = join(dir.path, 'sweets_databae.db');
   final db = await databaseFactoryIo.openDatabase(dbPath);
-  final preferencesRepo = PreferencesRepo(db);
 
   final authState = await AuthState.fromDb(db);
-  final preferences = await preferencesRepo.read();
+  final preferences = await PreferencesRepo(db).read();
 
   unawaited(
     SystemChrome.setPreferredOrientations([

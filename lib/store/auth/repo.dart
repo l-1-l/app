@@ -24,17 +24,18 @@ final authRepoProvider = Provider<AuthRepo>(
   (ref) {
     final net = ref.watch(netProvider);
     final db = ref.watch(dbProvider);
+    final authState = ref.watch(authProvider);
 
-    return AuthRepo(ref.read, net, db);
+    return AuthRepo(net, db, authState);
   },
 );
 
 class AuthRepo {
-  AuthRepo(this._reader, this.net, this.db);
+  AuthRepo(this.net, this.db, this.authState);
 
   late final NetClient net;
   late final Database db;
-  final Reader _reader;
+  late final AuthState authState;
 
   static final StoreRef<String, Map<String, dynamic>> accountsTable =
       stringMapStoreFactory.store('accounts');
@@ -99,7 +100,7 @@ class AuthRepo {
 
         await accountsTable.record(account.id).put(db, account.toJson());
 
-        return _reader(authProvider).maybeWhen(
+        return authState.maybeWhen(
           signed: (current, accounts) {
             return AuthState.signed(
               current: current,
