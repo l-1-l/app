@@ -4,9 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'user.freezed.dart';
 part 'user.g.dart';
 
-@Freezed(
-  unionValueCase: FreezedUnionCase.snake,
-)
+@freezed
 class IUser with _$IUser {
   const factory IUser({
     required int id,

@@ -1,24 +1,23 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar/isar.dart';
 
-import 'phone_number.dart';
 import 'account_status.dart';
+import 'auth_token.dart';
+import 'phone_number.dart';
 
 part 'account.freezed.dart';
 part 'account.g.dart';
 
-@Freezed(
-  unionValueCase: FreezedUnionCase.snake,
-)
-@Collection()
+@freezed
 class Account with _$Account {
   factory Account({
-    @Id() int? id_,
+    // ignore: invalid_annotation_target
     required String id,
     String? userId,
-    @PhoneNumberConverter() required final PhoneNumber phoneNumber,
+    required final PhoneNumber phoneNumber,
     String? email,
-    @AccountStatusConverter() required final AccountStatus status,
+    required final AccountStatus status,
+    @Default(AuthToken()) AuthToken token,
+    @Default(true) bool isCurrent,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _Account;

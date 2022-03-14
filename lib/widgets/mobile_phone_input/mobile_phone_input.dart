@@ -16,6 +16,7 @@ class MobilePhoneInput extends StatelessWidget {
     this.focusNode,
     this.onChange,
     this.onDialCodeChange,
+    this.onTap,
   }) : super(key: key);
 
   final String? value;
@@ -23,6 +24,7 @@ class MobilePhoneInput extends StatelessWidget {
   final String? dialCode;
   final void Function(String)? onChange;
   final void Function(String)? onDialCodeChange;
+  final void Function()? onTap;
   final TextEditingController? controller;
   final FocusNode? focusNode;
 
@@ -37,11 +39,10 @@ class MobilePhoneInput extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              flex: 1,
               child: InkWell(
                 splashColor: Colors.transparent,
                 onTap: () {
-                  showCupertinoModalBottomSheet(
+                  showCupertinoModalBottomSheet<void>(
                     context: context,
                     expand: true,
                     builder: (context) => CountrySelector(
@@ -54,7 +55,7 @@ class MobilePhoneInput extends StatelessWidget {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(0),
+                  padding: EdgeInsets.zero,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -81,14 +82,12 @@ class MobilePhoneInput extends StatelessWidget {
                 controller: controller,
                 keyboardType: TextInputType.phone,
                 onChanged: onChange,
+                onTap: onTap,
                 decoration: InputDecoration(
                   // isDense: true,
                   hintText: hint,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 0,
-                    vertical: 0,
-                  ),
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),

@@ -1,4 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:sembast/sembast.dart';
 
-final isarProvider = Provider<Isar>((_) => throw UnimplementedError());
+final dbProvider = Provider<Database>((_) => throw UnimplementedError());

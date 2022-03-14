@@ -1,19 +1,18 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bubble_box/bubble_box.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bubble_box/bubble_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart' as mp_parser;
 
-import '../../router/router.gr.dart';
-import '../../store/keyboard/keyboard.dart';
-import '../../types/otp_receiver.dart';
-import 'service_terms.dart';
 import '../../l10n/l10n.dart';
+import '../../router/router.gr.dart';
 import '../../store/auth.dart';
+import '../../types/otp_receiver.dart';
+import '../../types/phone_number.dart';
 import '../../widgets/loading.dart';
 import '../../widgets/mobile_phone_input/mobile_phone_input.dart';
-import '../../types/phone_number.dart';
+import 'service_terms.dart';
 
 class SigninPage extends ConsumerStatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
@@ -23,24 +22,23 @@ class SigninPage extends ConsumerStatefulWidget {
 }
 
 class _SigninState extends ConsumerState<SigninPage> {
-  final _inputNode = FocusNode();
-  final _inputController = TextEditingController();
-  late final AuthStateNotifier _authNotifier;
+  late final FocusNode _inputNode = FocusNode();
+  late final TextEditingController _inputController = TextEditingController();
 
-  Offset _checkboxPosition = const Offset(0, 0);
+  late Offset _checkboxPosition = Offset.zero;
 
-  String dialCode = '86';
-  String phoneNumber = '';
+  late String dialCode = '86';
+  late String phoneNumber = '';
 
-  bool isValidMobile = false;
-  bool? isAcceptedTerms = false;
-  bool isShowTermsTip = false;
-  bool isShowTermsPleaseTip = false;
+  late bool isValidMobile = false;
+  late bool? isAcceptedTerms = false;
+  late bool isShowTermsTip = false;
+  late bool isShowTermsPleaseTip = false;
 
   @override
   void initState() {
     super.initState();
-    _authNotifier = ref.read(authProvider.notifier);
+
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _checkboxPosition = _getCheckboxPosition();
     });
@@ -59,7 +57,8 @@ class _SigninState extends ConsumerState<SigninPage> {
   }
 
   Offset _getCheckboxPosition() {
-    final r = termsCheckboxKey.currentContext!.findRenderObject() as RenderBox;
+    final r = termsCheckboxKey.currentContext?.findRenderObject() as RenderBox?;
+    if (r == null) return Offset.zero;
     final position = r.localToGlobal(Offset.zero);
     return Offset(position.dx, position.dy + r.size.height * 0.7);
   }
@@ -83,6 +82,10 @@ class _SigninState extends ConsumerState<SigninPage> {
   }
 
   void _handlePhoneNumberChange(String val) {
+    final bottomViewInset = MediaQuery.of(context).viewInsets.bottom;
+
+    if (bottomViewInset > 0) {}
+
     setState(() {
       phoneNumber = val;
     });
@@ -114,12 +117,13 @@ class _SigninState extends ConsumerState<SigninPage> {
       return;
     }
 
-    _authNotifier
+    ref
+        .read(authProvider.notifier)
         .sendCode(
-      OtpReciver.phoneNumber(
-        PhoneNumber(prefix: dialCode, mobile: phoneNumber),
-      ),
-    )
+          OtpReciver.phoneNumber(
+            PhoneNumber(prefix: dialCode, mobile: phoneNumber),
+          ),
+        )
         .then(
       (value) {
         value.maybeWhen(
@@ -143,19 +147,14 @@ class _SigninState extends ConsumerState<SigninPage> {
     });
   }
 
-  void _handlePageTap(_) {
+  void _handlePageTap(PointerDownEvent e) {
     if (_inputNode.hasFocus) _inputNode.unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
     final t = context.l10n;
-    final keyboard = ref.watch(keyboardProvider.notifier);
-
-    final bottomInsets = MediaQuery.of(context).viewInsets.bottom;
-    if (_inputNode.hasFocus && keyboard.value == 0) {
-      keyboard.set(bottomInsets);
-    }
+    final authNotifier = ref.watch(authProvider.notifier);
 
     return Stack(
       children: [
@@ -163,11 +162,11 @@ class _SigninState extends ConsumerState<SigninPage> {
           onPointerDown: _handlePageTap,
           child: Scaffold(
             resizeToAvoidBottomInset: false,
+            appBar: AppBar(),
             body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
@@ -216,7 +215,7 @@ class _SigninState extends ConsumerState<SigninPage> {
                               minimumSize: const Size.fromHeight(48),
                             ),
                             onPressed: _handleSubmit,
-                            child: _authNotifier.loading || isValidMobile
+                            child: authNotifier.loading || isValidMobile
                                 ? const Loader()
                                 : AutoSizeText(t.authVerifyCode),
                           ),

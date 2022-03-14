@@ -8,20 +8,20 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'translator.dart';
-import 'search_box.dart';
-import 'country_type.dart';
 import 'country.dart';
+import 'country_type.dart';
+import 'search_box.dart';
+import 'translator.dart';
 
 class CountrySelector extends StatefulWidget {
-  final ScrollController? controller;
-  final void Function(ICountry country)? onSelected;
-
   const CountrySelector({
     Key? key,
     this.controller,
     this.onSelected,
   }) : super(key: key);
+
+  final ScrollController? controller;
+  final void Function(ICountry country)? onSelected;
 
   @override
   State<CountrySelector> createState() => _CountrySelectorState();
@@ -61,11 +61,16 @@ class _CountrySelectorState extends State<CountrySelector> {
   }
 
   IList<ICountry> initData() => allCountries.map((json) {
-        json['name'] = CountryTranslator.getNameForCode(context, json['code']);
+        final code = json['code'];
+        if (code != null) {
+          final name = CountryTranslator.getNameForCode(context, code);
+          json['name'] = name ?? '';
+        }
+
         return ICountry.fromJson(json);
       }).toIList();
 
-  handleSearchChange(String val) {
+  void handleSearchChange(String val) {
     EasyDebounce.debounce(
       'searchDebouncer',
       const Duration(microseconds: 200),
@@ -84,12 +89,15 @@ class _CountrySelectorState extends State<CountrySelector> {
       return;
     }
 
-    final result = countries.where((c) {
-      return (c.name.toLowerCase().contains(val) ||
-          c.countryName.toLowerCase().contains(val) ||
-          c.nativeName.toLowerCase().contains(val) ||
-          c.dialCode.contains(val));
-    }).toIList();
+    final result = countries
+        .where(
+          (c) =>
+              c.name.toLowerCase().contains(val) ||
+              c.countryName.toLowerCase().contains(val) ||
+              c.nativeName.toLowerCase().contains(val) ||
+              c.dialCode.contains(val),
+        )
+        .toIList();
 
     setState(() {
       searchResults = result;
@@ -121,7 +129,6 @@ class _CountrySelectorState extends State<CountrySelector> {
             ),
             padding: const EdgeInsets.only(top: 6),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const DragHandle(),
                 Expanded(
@@ -130,7 +137,6 @@ class _CountrySelectorState extends State<CountrySelector> {
                       t.region,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    alignment: Alignment.center,
                   ),
                 ),
               ],

@@ -5,12 +5,6 @@ enum Flavor {
 }
 
 class FlavorConfig {
-  static FlavorConfig? _instance;
-  static FlavorConfig get instance => _instance!;
-
-  final Flavor flavor;
-  final FlavorValues values;
-
   factory FlavorConfig({
     required Flavor flavor,
     required FlavorValues values,
@@ -22,11 +16,16 @@ class FlavorConfig {
 
     return _instance!;
   }
-
   FlavorConfig._internal(
     this.flavor,
     this.values,
   );
+
+  static FlavorConfig? _instance;
+  static FlavorConfig get instance => _instance!;
+
+  final Flavor flavor;
+  final FlavorValues values;
 
   static bool isDevelopment() => _instance?.flavor == Flavor.development;
 
@@ -36,11 +35,11 @@ class FlavorConfig {
 }
 
 class FlavorValues {
-  final String baseUrl;
-  final String? httpProxy;
-
   const FlavorValues({
     required this.baseUrl,
     this.httpProxy,
   });
+
+  final String baseUrl;
+  final String? httpProxy;
 }

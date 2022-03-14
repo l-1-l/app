@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
+import '../l10n/l10n.dart';
 import '../router/router.gr.dart';
 import '../widgets/iconfont.dart';
-import '../l10n/l10n.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -20,7 +20,8 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
   }
 
-  void onPublishTap(prev) {
+  // ignore: avoid_positional_boolean_parameters
+  void onPublishTap(bool prev) {
     setState(() {
       isShowPublish = !prev;
     });
@@ -103,15 +104,6 @@ class _LandingPageState extends State<LandingPage> {
 }
 
 class NavBarItem<T1, T2> extends StatelessWidget {
-  final T1 cursor;
-  final T2 index;
-  final double? size;
-  final String tip;
-  final IconData icon;
-  final IconData activeIcon;
-
-  final void Function(T2)? onTap;
-
   const NavBarItem({
     Key? key,
     required this.index,
@@ -123,7 +115,16 @@ class NavBarItem<T1, T2> extends StatelessWidget {
     required this.activeIcon,
   }) : super(key: key);
 
-  _onTap() {
+  final T1 cursor;
+  final T2 index;
+  final double? size;
+  final String tip;
+  final IconData icon;
+  final IconData activeIcon;
+
+  final void Function(T2)? onTap;
+
+  void _onTap() {
     onTap?.call(index);
   }
 

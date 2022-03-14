@@ -1,22 +1,20 @@
-import 'package:app/store/token/repository.dart';
+import 'package:app/types/auth_token.dart';
 import 'package:app/utils/jwt.dart';
 import 'package:dio/dio.dart';
 
 class TokenInterceptors extends QueuedInterceptor {
-  final Dio dio;
+  TokenInterceptors(this.dio, this._token);
 
-  TokenInterceptors(this.dio);
+  final Dio dio;
+  final AuthToken? _token;
 
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final repo = AuthTokenRepository();
-    final authToken = await repo.fromStorage();
-
-    if (authToken != null) {
-      final expiration = Jwt.remaingTime(authToken.accessToken);
+    if (_token != null) {
+      final expiration = Jwt.remaingTime(_token!.accessToken);
 
       if (expiration != null && expiration.inSeconds < 60) {
         // dio.interceptors.requestLock.lock();
@@ -31,7 +29,7 @@ class TokenInterceptors extends QueuedInterceptor {
         // }).whenComplete(() => dio.interceptors.requestLock.unlock());
       }
 
-      options.headers['Authorization'] = 'Bearer ${authToken.accessToken}';
+      options.headers['Authorization'] = 'Bearer ${_token!.accessToken}';
     }
 
     return handler.next(options);

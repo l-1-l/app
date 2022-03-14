@@ -3,10 +3,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ovo_ui/mod.dart';
 
-import 'router/router.gr.dart';
-import 'store/auth/notifier.dart';
-import 'store/theme/theme.dart';
 import 'l10n/l10n.dart';
+import 'router/router.gr.dart';
+import 'store/auth.dart';
+import 'store/preferences.dart';
 import 'widgets/top.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -23,12 +23,12 @@ class _AppState extends ConsumerState<App> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeProvider);
+    final preferences = ref.watch(preferencesProvider);
     final authState = ref.watch(authProvider);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      themeMode: themeMode,
+      themeMode: preferences.themeMode,
       theme: OvOThemeData.lightThemeData,
       localizationsDelegates: const [
         AppLocalizations.delegate,

@@ -1,30 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../types/otp_receiver.dart';
 import '../../types/account.dart';
+import '../../types/otp_receiver.dart';
 
-import 'state.dart';
 import 'repo.dart';
-
-final accountProvider = Provider<Account?>((_) => null);
+import 'state.dart';
 
 final authProvider = StateNotifierProvider<AuthStateNotifier, AuthState>(
-  (ref) {
-    final account = ref.watch(accountProvider);
-    return AuthStateNotifier(
-      ref.read,
-      account == null ? const AuthState.initial() : AuthState.signed(account),
-    );
-  },
+  (ref) => throw UnimplementedError(),
 );
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
+  AuthStateNotifier(this._reader, AuthState initialState) : super(initialState);
+
+  bool _loading = false;
+
   final Reader _reader;
   late final AuthRepo _authRepo = _reader(authRepoProvider);
 
-  AuthStateNotifier(this._reader, AuthState initialState) : super(initialState);
-
-  bool get loading => state == const AuthState.loading();
+  bool get loading => _loading;
 
   bool get isAuthenticated => state is AuthSignedState;
 
@@ -32,20 +26,26 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     if (state != next) state = next;
   }
 
-  void setLoading() {
-    set(const AuthState.loading());
-  }
-
   Future<AuthState> sendCode(OtpReciver reciver) async {
-    set(const AuthState.loading());
+    _loading = true;
     state = await _authRepo.sendCode(reciver);
+    _loading = false;
     return state;
   }
 
-  Future<void> signup(
+  Future<AuthState> signup(
     OtpReciver receiver,
     String code,
   ) async {
-    await _authRepo.signup(receiver: receiver, code: code);
+    return state = await _authRepo.signup(receiver: receiver, code: code);
+  }
+
+  void switchAccount(Account account) {
+    state.maybeWhen(
+      signed: (_, accounts) {
+        state = AuthState.signed(current: account, accounts: accounts);
+      },
+      orElse: () {},
+    );
   }
 }

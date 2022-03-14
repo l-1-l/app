@@ -3,8 +3,9 @@
 import 'dart:io';
 
 import 'package:app/conf/flavor.dart';
-import 'package:app/store/network/provider.dart';
-import 'package:app/store/network/notifier.dart';
+import 'package:app/store/auth.dart';
+import 'package:app/store/network.dart';
+import 'package:app/types/auth_token.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -16,18 +17,24 @@ import 'interceptors.dart';
 import 'response.dart';
 
 final netProvider = Provider((ref) {
-  final dio = NetClient.createDio();
-  final netNotifier = ref.read(networkProvider.notifier);
+  final netNotifier = ref.watch(networkProvider.notifier);
+  final token = ref.watch(authProvider).maybeWhen(
+        signed: (current, _) => current.token,
+        orElse: () => null,
+      );
+
+  final dio = NetClient.createDio(token: token);
+
   return NetClient(dio, netNotifier);
 });
 
 class NetClient {
+  NetClient(this.dio, this.notifier);
+
   final Dio dio;
   final NetworkNotifier notifier;
 
-  NetClient(this.dio, this.notifier);
-
-  static Dio createDio([String baseUrl = '']) {
+  static Dio createDio({String baseUrl = '', AuthToken? token}) {
     final dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -74,7 +81,7 @@ class NetClient {
     );
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
 
-    dio.interceptors.add(TokenInterceptors(dio));
+    dio.interceptors.add(TokenInterceptors(dio, token));
 
     return dio;
   }

@@ -6,8 +6,8 @@ part 'auth_token.g.dart';
 @freezed
 class AuthToken with _$AuthToken {
   const factory AuthToken({
-    required String accessToken,
-    required String refreshToken,
+    @Default('') String accessToken,
+    @Default('') String refreshToken,
   }) = _AuthToken;
 
   factory AuthToken.fromJson(

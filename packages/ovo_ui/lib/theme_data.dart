@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 ///
 class OvOThemeData {
@@ -31,7 +32,10 @@ class OvOThemeData {
         backgroundColor: colorScheme.background,
         elevation: 0,
         shadowColor: Colors.transparent,
-        // iconTheme: IconThemeData(color: colorScheme.primary),
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: colorScheme.surface,
+          // statusBarBrightness:
+        ),
       ),
       // iconTheme: IconThemeData(color: colorScheme.onPrimary),
       canvasColor: colorScheme.background,
@@ -72,8 +76,8 @@ class OvOThemeData {
 
     tertiary: Color(0xfff7f7f7),
     // background: Color(0xFFFBFBFC),
-    background: Colors.white,
-    surface: Colors.white,
+    background: Color(0xfff2f2f6),
+    surface: Color(0xfff2f2f6),
     onBackground: Colors.white,
     // outline: Color.fromRGBO(189, 189, 189, 1),
     outline: Color(0xffd9d9d9),

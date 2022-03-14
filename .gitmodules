@@ -1,0 +1,3 @@
+[submodule "packages/image_crop"]
+	path = packages/image_crop
+	url = git@github.com:G11Max/image_crop.git

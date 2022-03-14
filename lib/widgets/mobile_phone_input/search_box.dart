@@ -1,18 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:app/l10n/l10n.dart';
+import 'package:flutter/material.dart';
+
 import '../iconfont.dart';
 
 class SearchBox extends StatelessWidget {
-  final FocusNode? focusNode;
-  final void Function(String)? onChange;
-  final TextEditingController? controller;
-
   const SearchBox({
     Key? key,
     this.onChange,
     this.focusNode,
     this.controller,
   }) : super(key: key);
+
+  final FocusNode? focusNode;
+  final void Function(String)? onChange;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +37,13 @@ class SearchBox extends StatelessWidget {
               decoration: InputDecoration(
                 isDense: true,
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 0,
-                  vertical: 0,
-                ),
+                contentPadding: EdgeInsets.zero,
                 hintText: context.l10n.search,
               ),
             ),
           ),
           Icon(
-            Iconfont.search_line,
+            Iconfont.search,
             color: hintStyle?.color,
             size: theme.textTheme.bodyText2?.fontSize,
           )

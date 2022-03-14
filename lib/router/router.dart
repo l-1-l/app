@@ -1,60 +1,59 @@
 import 'package:auto_route/auto_route.dart';
 
 import '../pages/account/account.dart';
-import '../pages/auth/verify.dart';
 import '../pages/auth/signin.dart';
-import '../pages/home/home.dart';
-import '../pages/messaging/messaging.dart';
-import '../pages/landing.dart';
+import '../pages/auth/verify.dart';
 import '../pages/explore/expore.dart';
+import '../pages/home/home.dart';
+import '../pages/landing.dart';
+import '../pages/messaging/messaging.dart';
 import '../pages/publish/publish.dart';
 
-@CustomAutoRouter(
-  transitionsBuilder: TransitionsBuilders.slideLeft,
+@CupertinoAutoRouter(
   replaceInRouteName: 'Page,Router',
   routes: <AutoRoute>[
-    AutoRoute(
+    AutoRoute<dynamic>(
       path: '/',
       page: LandingPage,
       children: [
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: '',
           name: 'HomeRouter',
           page: HomePage,
         ),
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: 'explore',
           usesPathAsKey: true,
           page: ExplorePage,
         ),
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: 'messaging',
           usesPathAsKey: true,
           page: MessagingPage,
         ),
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: 'account',
           usesPathAsKey: true,
           page: AccountPage,
         ),
       ],
     ),
-    CustomRoute(
+    CustomRoute<dynamic>(
       path: '/publish',
       usesPathAsKey: true,
       page: PublishPage,
-      transitionsBuilder: TransitionsBuilders.slideRight,
+      transitionsBuilder: TransitionsBuilders.slideBottom,
     ),
-    AutoRoute(
+    AutoRoute<dynamic>(
       path: '/auth',
       name: 'AuthRouter',
       page: EmptyRouterPage,
       children: [
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: 'signin',
           page: SigninPage,
         ),
-        AutoRoute(
+        AutoRoute<dynamic>(
           path: 'verify',
           page: AuthVerifyPage,
         ),

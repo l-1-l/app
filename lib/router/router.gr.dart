@@ -30,80 +30,49 @@ class AppRouter extends _i3.RootStackRouter {
   @override
   final Map<String, _i3.PageFactory> pagesMap = {
     LandingRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i1.LandingPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i1.LandingPage());
     },
     PublishRouter.name: (routeData) {
       return _i3.CustomPage<dynamic>(
           routeData: routeData,
           child: const _i2.PublishPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideRight,
+          transitionsBuilder: _i3.TransitionsBuilders.slideBottom,
           opaque: true,
           barrierDismissible: false);
     },
     AuthRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i3.EmptyRouterPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i3.EmptyRouterPage());
     },
     HomeRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i4.HomePage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i4.HomePage());
     },
     ExploreRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i5.ExplorePage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i5.ExplorePage());
     },
     MessagingRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i6.MessagingPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i6.MessagingPage());
     },
     AccountRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i7.AccountPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i7.AccountPage());
     },
     SigninRouter.name: (routeData) {
-      return _i3.CustomPage<dynamic>(
-          routeData: routeData,
-          child: const _i8.SigninPage(),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+      return _i3.CupertinoPageX<dynamic>(
+          routeData: routeData, child: const _i8.SigninPage());
     },
     AuthVerifyRouter.name: (routeData) {
       final args = routeData.argsAs<AuthVerifyRouterArgs>();
-      return _i3.CustomPage<dynamic>(
+      return _i3.CupertinoPageX<dynamic>(
           routeData: routeData,
           child: _i9.AuthVerifyPage(
               key: args.key,
               receiver: args.receiver,
-              isNewAccount: args.isNewAccount),
-          transitionsBuilder: _i3.TransitionsBuilders.slideLeft,
-          opaque: true,
-          barrierDismissible: false);
+              isNewAccount: args.isNewAccount));
     }
   };
 

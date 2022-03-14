@@ -12,8 +12,8 @@ targets:
           constructor: ""
           create_factory: true
           create_to_json: true
+          explicit_to_json: true
           disallow_unrecognized_keys: false
-          explicit_to_json: false
           field_rename: snake
           generic_argument_factories: false
           ignore_unannotated: false

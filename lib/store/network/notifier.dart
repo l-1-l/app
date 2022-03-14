@@ -6,20 +6,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'state.dart';
 
-class NetworkNotifier extends StateNotifier<NetworkState> {
-  final StateNotifierProviderRef<NetworkNotifier, NetworkState> ref;
-  final Connectivity _connectivity = Connectivity();
+final networkProvider = StateNotifierProvider<NetworkNotifier, NetworkState>(
+  NetworkNotifier.new,
+);
 
+class NetworkNotifier extends StateNotifier<NetworkState> {
   NetworkNotifier(this.ref) : super(const NetworkState.initial()) {
     _initConnectivity();
 
-    StreamSubscription<ConnectivityResult> _subscription =
+    final _subscription =
         _connectivity.onConnectivityChanged.listen(_handleConnectivityChange);
 
-    ref.onDispose(() {
-      _subscription.cancel();
-    });
+    ref.onDispose(_subscription.cancel);
   }
+
+  final StateNotifierProviderRef<NetworkNotifier, NetworkState> ref;
+  final Connectivity _connectivity = Connectivity();
 
   Future<void> _initConnectivity() async {
     late ConnectivityResult result;
@@ -27,7 +29,7 @@ class NetworkNotifier extends StateNotifier<NetworkState> {
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
-      log('Couldn\'t check connectivity status', error: e);
+      log("Couldn't check connectivity status", error: e);
       return;
     }
 
@@ -41,7 +43,7 @@ class NetworkNotifier extends StateNotifier<NetworkState> {
     return _handleConnectivityChange(result);
   }
 
-  _handleConnectivityChange(ConnectivityResult event) {
+  void _handleConnectivityChange(ConnectivityResult event) {
     NetworkState newState;
     switch (event) {
       case ConnectivityResult.mobile:

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -6,20 +8,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-import '../../router/router.gr.dart';
 import '../../l10n/l10n.dart';
+import '../../router/router.gr.dart';
 import '../../store/auth.dart';
 import '../../types/otp_receiver.dart';
 
 class AuthVerifyPage extends ConsumerStatefulWidget {
-  final OtpReciver receiver;
-  final bool isNewAccount;
-
   const AuthVerifyPage({
     Key? key,
     required this.receiver,
     required this.isNewAccount,
   }) : super(key: key);
+
+  final OtpReciver receiver;
+  final bool isNewAccount;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AuthVerifyPageState();
@@ -40,11 +42,10 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
     resendRecognizer = TapGestureRecognizer()
       ..onTap = () {
         EasyDebounce.debounce(
-          "resendDebouncer",
+          'resendDebouncer',
           const Duration(seconds: 3),
           () {
-            final authNotifier = ref.read(authProvider.notifier);
-            authNotifier.sendCode(widget.receiver);
+            ref.read(authProvider.notifier).sendCode(widget.receiver);
           },
         );
       };
@@ -55,19 +56,25 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
     super.dispose();
     inputController.dispose();
     resendRecognizer.dispose();
-    EasyDebounce.cancel("resendDebouncer");
+    EasyDebounce.cancel('resendDebouncer');
   }
 
-  handleSubmit(String v) async {
-    final auth = ref.read(authProvider.notifier);
+  Future<void> handleSubmit(String v) async {
+    final state = await ref
+        .read(authProvider.notifier)
+        .signup(widget.receiver, inputController.text);
 
-    await auth.signup(widget.receiver, inputController.text);
-    context.replaceRoute(const LandingRouter());
+    state.maybeWhen(
+      signed: (current, accounts) {
+        context.replaceRoute(const LandingRouter());
+      },
+      orElse: () {},
+    );
   }
 
-  handleChange(String v) {
+  void handleChange(String v) {
     if (v.isNotEmpty && int.tryParse(v) == null || v.contains(' ')) {
-      var validCode = v.substring(0, v.length - 1);
+      final validCode = v.substring(0, v.length - 1);
 
       inputController.value = TextEditingValue(
         text: validCode,
@@ -96,20 +103,16 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
     final cs = Theme.of(context).colorScheme;
 
     final address = widget.receiver.when(
-      phoneNumber: (mobile) => "+${mobile.prefix} ${mobile.mobile}",
+      phoneNumber: (mobile) => '+${mobile.prefix} ${mobile.mobile}',
       email: (v) => v,
     );
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-      ),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                 flex: 3,
@@ -133,13 +136,11 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
               Expanded(
                 flex: 3,
                 child: Align(
-                  alignment: Alignment.center,
                   child: PinPut(
                     fieldsCount: 6,
                     autofocus: true,
                     focusNode: inputNode,
                     controller: inputController,
-                    keyboardType: TextInputType.number,
                     onChanged: handleChange,
                     pinAnimationType: PinAnimationType.scale,
                     fieldsAlignment: MainAxisAlignment.spaceEvenly,

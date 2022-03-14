@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'country_type.dart';
 
 class Country extends StatelessWidget {
-  final ICountry country;
-  final void Function(ICountry)? onTap;
-
   const Country({
     Key? key,
     required this.country,
     required this.onTap,
   }) : super(key: key);
+
+  final ICountry country;
+  final void Function(ICountry)? onTap;
 
   void _handleTap() {
     onTap?.call(country);
@@ -42,8 +42,10 @@ class Country extends StatelessWidget {
               country.name,
               style: theme.textTheme.bodyText2,
             ),
-            AutoSizeText("+ ${country.dialCode}",
-                style: theme.textTheme.bodyText1),
+            AutoSizeText(
+              '+ ${country.dialCode}',
+              style: theme.textTheme.bodyText1,
+            ),
           ],
         ),
       ),

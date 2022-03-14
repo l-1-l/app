@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar/isar.dart';
 
 // pub enum AccountStatus {
 //     DeregisteringBlack, // 账户同时进入注销期和小黑屋
@@ -26,14 +25,4 @@ enum AccountStatus {
   activeBlack,
   @JsonValue(2)
   active,
-}
-
-class AccountStatusConverter extends TypeConverter<AccountStatus, int> {
-  const AccountStatusConverter();
-
-  @override
-  AccountStatus fromIsar(int object) => AccountStatus.values[object];
-
-  @override
-  int toIsar(AccountStatus object) => object.index;
 }

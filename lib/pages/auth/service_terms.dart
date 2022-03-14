@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 final GlobalKey termsCheckboxKey = GlobalKey();
 
 class ServiceTerms extends StatefulWidget {
-  final bool? isAccepted;
-  final void Function(bool?)? onChange;
   const ServiceTerms({
     Key? key,
     this.isAccepted,
     this.onChange,
   }) : super(key: key);
+
+  final bool? isAccepted;
+  final void Function(bool?)? onChange;
 
   @override
   State<ServiceTerms> createState() => _ServiceTermsState();
@@ -25,14 +26,15 @@ class _ServiceTermsState extends State<ServiceTerms> {
   void initState() {
     super.initState();
     serviceTermsRecognizer = TapGestureRecognizer()
-      ..onTap = handleOpenLink("serviceTerms");
+      ..onTap = handleOpenLink('serviceTerms');
 
     privacyPolicyRecognizer = TapGestureRecognizer()
-      ..onTap = handleOpenLink("privacyPolicy");
+      ..onTap = handleOpenLink('privacyPolicy');
   }
 
-  handleOpenLink(String page) => () => {
+  void Function() handleOpenLink(String page) => () {
         // TODO: Privacy policy and terms of service
+        return;
       };
 
   @override
@@ -47,7 +49,6 @@ class _ServiceTermsState extends State<ServiceTerms> {
     final t = context.l10n;
     final cs = Theme.of(context).colorScheme;
     return Row(
-      mainAxisSize: MainAxisSize.max,
       children: [
         SizedBox(
           key: termsCheckboxKey,
@@ -68,7 +69,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
           child: AutoSizeText.rich(
             TextSpan(
               children: [
-                TextSpan(text: "${t.authTerms}《"),
+                TextSpan(text: '${t.authTerms}《'),
                 TextSpan(
                   text: t.privacyPolicy,
                   style: TextStyle(
@@ -77,7 +78,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
                   ),
                   recognizer: privacyPolicyRecognizer,
                 ),
-                TextSpan(text: "》${t.and}《"),
+                TextSpan(text: '》${t.and}《'),
                 TextSpan(
                   text: t.serviceTerms,
                   style: TextStyle(
@@ -86,7 +87,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
                   ),
                   recognizer: serviceTermsRecognizer,
                 ),
-                const TextSpan(text: "》"),
+                const TextSpan(text: '》'),
               ],
             ),
             style: Theme.of(context).textTheme.caption,

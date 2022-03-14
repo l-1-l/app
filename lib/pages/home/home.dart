@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 16.0,
+          elevation: 16,
           centerTitle: true,
           title: FractionallySizedBox(
             widthFactor: 0.5,
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage>
               labelColor: Theme.of(context).colorScheme.primary,
               // indicatorSize: TabBarIndicatorSize.label,
               indicator: const UnderlineTabIndicator(
-                borderSide: BorderSide(width: 2.0),
+                borderSide: BorderSide(width: 2),
                 // insets: EdgeInsets.symmetric(horizontal: 16.0),
               ),
               tabs: [
@@ -51,12 +51,12 @@ class _HomePageState extends State<HomePage>
                   onPressed: () {
                     context.router.pushNamed('/auth/signin');
                   },
-                  child: Text('Auth'),
+                  child: const Text('Auth'),
                 ),
               ),
               ElevatedButton(
                 onPressed: () {},
-                child: Text('Auth'),
+                child: const Text('Auth'),
               ),
             ],
           ),

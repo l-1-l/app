@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nil/nil.dart';
 
-import '../store/network/network.dart';
-import '../store/notification/notification.dart';
+import '../store/network.dart';
+import '../store/notification.dart';
 import 'iconfont.dart';
 
 class Top extends ConsumerWidget {
@@ -52,7 +52,7 @@ class Top extends ConsumerWidget {
                       : MainAxisAlignment.start,
                   children: [
                     if (icon)
-                      const Icon(Iconfont.waring_line, color: Colors.white),
+                      const Icon(Iconfont.alert_triangle, color: Colors.white),
                     if (icon) const SizedBox(width: 12),
                     AutoSizeText(
                       msg,
@@ -68,10 +68,15 @@ class Top extends ConsumerWidget {
       };
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final notifi = ref.watch(notifProvider.notifier);
-
     final ctx = navigatorKey.currentContext;
+    // final bottomViewInsets = MediaQuery.of(context).viewInsets.bottom;
+
+    // if (bottomViewInsets > 0) {
+    //   ref.read(keyboardHeightProvider.notifier).set(bottomViewInsets);
+    // }
+
     ref.listen<NotifState>(notifProvider, (previous, next) {
       if (next != previous && ctx != null) {
         next.maybeWhen(
@@ -81,6 +86,7 @@ class Top extends ConsumerWidget {
       }
     });
 
+    // ignore: cascade_invocations
     ref.listen<NetworkState>(networkProvider, (previous, next) {
       if (previous != next && ctx != null) {
         next.maybeWhen(
@@ -91,6 +97,7 @@ class Top extends ConsumerWidget {
         );
       }
     });
+
     return child ?? nil;
   }
 }
