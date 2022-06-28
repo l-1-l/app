@@ -39,7 +39,7 @@ class _SigninState extends ConsumerState<SigninPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkboxPosition = _getCheckboxPosition();
     });
   }
@@ -170,7 +170,7 @@ class _SigninState extends ConsumerState<SigninPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: AutoSizeText(
@@ -184,25 +184,22 @@ class _SigninState extends ConsumerState<SigninPage> {
                     ),
                     Expanded(
                       flex: 2,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoSizeText(
-                              t.phoneNumber,
-                              style: Theme.of(context).textTheme.subtitle2,
-                            ),
-                            MobilePhoneInput(
-                              focusNode: _inputNode,
-                              controller: _inputController,
-                              dialCode: dialCode,
-                              onChange: _handlePhoneNumberChange,
-                              onDialCodeChange: _handleDialCodeChange,
-                            ),
-                          ],
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            t.phoneNumber,
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          MobilePhoneInput(
+                            focusNode: _inputNode,
+                            controller: _inputController,
+                            dialCode: dialCode,
+                            onChange: _handlePhoneNumberChange,
+                            onDialCodeChange: _handleDialCodeChange,
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(

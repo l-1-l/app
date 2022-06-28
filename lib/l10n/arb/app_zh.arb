@@ -14,7 +14,7 @@
   "@_LOGIN_PAGE": {},
   "authTitle": "手机号登录",
   "authVerifyCode": "获取验证码",
-  "needViewTerms": "请看看吧",
+  "needViewTerms": "请勾选并查看条款",
   "needViewTermsPlease": "求求你了",
   "authTerms": "已阅读并同意",
   "privacyPolicy": "隐私政策",

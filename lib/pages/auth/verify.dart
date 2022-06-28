@@ -6,7 +6,7 @@ import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pinput.dart';
 
 import '../../l10n/l10n.dart';
 import '../../router/router.gr.dart';
@@ -31,7 +31,9 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
   late final TapGestureRecognizer resendRecognizer;
   late final TextEditingController inputController;
   late final FocusNode inputNode;
-  // late final
+
+  // late final PinTheme defaultPinTheme;
+  // late final PinTheme focusedPinTheme;
 
   @override
   void initState() {
@@ -88,19 +90,42 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
     }
   }
 
-  BoxDecoration get _pinPutDecoration {
-    return BoxDecoration(
-      border: Border.all(color: Theme.of(context).colorScheme.outline),
-      borderRadius: BorderRadius.circular(6),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final t = context.l10n;
 
     final textTheme = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
+
+    // final defaultPinTheme = PinTheme(
+    //   textStyle: const TextStyle(fontSize: 24),
+    //   // constraints: const BoxConstraints(
+    //   //   maxHeight: 38,
+    //   //   maxWidth: 30,
+    //   // ),
+    //   // decoration: BoxDecoration(
+    //   //   border: Border.all(color: cs.outline),
+    //   //   borderRadius: BorderRadius.circular(6),
+    //   // ),
+    // );
+
+    // final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+    //   border: Border.all(color: cs.primary),
+    // );
+    const fillColor = Color.fromRGBO(222, 231, 240, .57);
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 60,
+      textStyle: const TextStyle(
+        fontSize: 24,
+        color: Color.fromRGBO(30, 60, 87, 1),
+      ),
+      decoration: BoxDecoration(
+        color: fillColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.transparent),
+      ),
+    );
 
     final address = widget.receiver.when(
       phoneNumber: (mobile) => '+${mobile.prefix} ${mobile.mobile}',
@@ -136,30 +161,21 @@ class _AuthVerifyPageState extends ConsumerState<AuthVerifyPage> {
               Expanded(
                 flex: 3,
                 child: Align(
-                  child: PinPut(
-                    fieldsCount: 6,
+                  child: Pinput(
+                    length: 6,
                     autofocus: true,
+                    // pinAnimationType: PinAnimationType.fade,
                     focusNode: inputNode,
-                    controller: inputController,
+
                     onChanged: handleChange,
-                    pinAnimationType: PinAnimationType.scale,
-                    fieldsAlignment: MainAxisAlignment.spaceEvenly,
-                    textStyle: const TextStyle(fontSize: 24),
-                    eachFieldConstraints: const BoxConstraints(
-                      maxHeight: 38,
-                      maxWidth: 30,
-                    ),
-                    submittedFieldDecoration: _pinPutDecoration.copyWith(
-                        // borderRadius: BorderRadius.circular(20.0),
-                        ),
-                    selectedFieldDecoration: _pinPutDecoration.copyWith(
-                      border: Border.all(color: cs.primary),
-                    ),
-                    followingFieldDecoration: _pinPutDecoration.copyWith(
-                      border: Border.all(
-                        color: cs.outline,
-                      ),
-                    ),
+                    controller: inputController,
+                    // cursor: cursor,
+                    defaultPinTheme: defaultPinTheme,
+                    // preFilledWidget: preFilledWidget,
+                    // followingPinTheme: defaultPinTheme,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    androidSmsAutofillMethod:
+                        AndroidSmsAutofillMethod.smsRetrieverApi,
                   ),
                 ),
               ),

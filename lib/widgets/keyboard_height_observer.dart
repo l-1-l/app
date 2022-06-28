@@ -8,12 +8,12 @@ mixin KeyboardHeightObserver<T extends StatefulWidget>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     EasyDebounce.cancel('updateKeyboardHeight');
     super.dispose();
   }
@@ -37,8 +37,8 @@ mixin KeyboardHeightObserver<T extends StatefulWidget>
   void onKeyboardOpen(double _height);
 
   double get keyboardHeight {
-    final window = WidgetsBinding.instance?.window;
-    if (window == null) return _height;
+    final window = WidgetsBinding.instance.window;
+    // if (window == null) return _height;
 
     return EdgeInsets.fromWindowPadding(
       window.viewInsets,

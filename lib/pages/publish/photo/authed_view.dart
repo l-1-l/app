@@ -258,11 +258,11 @@ class _PhotoEditor extends ConsumerStatefulWidget {
     Key? key,
     this.media,
     this.cropKey,
-    this.isShowRatioBar = false,
+    // this.isShowRatioBar = false,
   }) : super(key: key);
 
   final AssetEntity? media;
-  final bool isShowRatioBar;
+  // final bool isShowRatioBar;
   final GlobalKey? cropKey;
 
   @override
@@ -306,21 +306,15 @@ class _MediaCropState extends ConsumerState<_PhotoEditor> {
 class _TextEditor extends StatelessWidget {
   const _TextEditor({
     Key? key,
-    this.controller,
     this.focusNode,
     this.onChange,
     this.onTap,
-    this.readOnly = false,
-    this.autofocus = true,
     this.keyboardType,
   }) : super(key: key);
 
-  final TextEditingController? controller;
   final FocusNode? focusNode;
   final void Function(String)? onChange;
   final void Function()? onTap;
-  final bool readOnly;
-  final bool autofocus;
   final TextInputType? keyboardType;
 
   @override
@@ -331,8 +325,7 @@ class _TextEditor extends StatelessWidget {
       child: TextField(
         keyboardType: keyboardType,
         showCursor: true,
-        autofocus: autofocus,
-        readOnly: readOnly,
+        autofocus: true,
         focusNode: focusNode,
         onTap: onTap,
         onChanged: onChange,

@@ -33,7 +33,7 @@ class OvOThemeData {
         elevation: 0,
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: colorScheme.surface,
+          statusBarColor: colorScheme.background,
           // statusBarBrightness:
         ),
       ),
@@ -75,8 +75,8 @@ class OvOThemeData {
     secondaryContainer: Color(0xFFFAFBFB),
 
     tertiary: Color(0xfff7f7f7),
-    // background: Color(0xFFFBFBFC),
-    background: Color(0xfff2f2f6),
+    background: Color(0xFFFBFBFC),
+    // background: Color(0xfff2f2f6),
     surface: Color(0xfff2f2f6),
     onBackground: Colors.white,
     // outline: Color.fromRGBO(189, 189, 189, 1),

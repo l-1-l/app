@@ -1,4 +1,4 @@
-package microsweet.com.app
+package com.microsweet.app
 
 import io.flutter.embedding.android.FlutterActivity
 
